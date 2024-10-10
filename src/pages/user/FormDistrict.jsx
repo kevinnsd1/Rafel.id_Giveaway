@@ -32,15 +32,13 @@ export default function FormPage() {
   }, []);
 
   return (
-    <div className="min-h-screen p-4 bg-white flex flex-col items-center">
+    <div className="min-h-screen bg-white flex flex-col items-center justify-center p-4">
       {/* Header */}
-      <header className="w-full bg-white shadow-md p-4 flex justify-between items-center fixed z-50">
+      <header className="w-full bg-white shadow-md p-4 flex justify-between items-center top-0 fixed z-50">
         <button className="text-2xl" onClick={() => navigate("/form-subdistrict")}>
           ←
         </button>
-        <h1
-          className="flex-grow text-center text-lg font-bold font-mono"
-        >
+        <h1 className="flex-grow text-center text-lg font-bold font-mono">
           Rafel.id
         </h1>
       </header>
