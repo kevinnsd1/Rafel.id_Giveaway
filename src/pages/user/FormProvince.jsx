@@ -18,9 +18,7 @@ export default function FormPage() {
   useEffect(() => {
     async function fetchProvinces() {
       try {
-        const response = await fetch(
-          "https://wilayah.exfw.dev/api/provinces.json"
-        );
+        const response = await fetch(import.meta.env.VITE_API_URL_WILAYAH);
         const data = await response.json();
         setProvinces(data); // Simpan data provinsi ke state
       } catch (error) {
