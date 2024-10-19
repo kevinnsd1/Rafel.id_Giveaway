@@ -50,10 +50,10 @@ const LoginPage = () => {
             navigate("/HomePageAdmin"); // Navigasi ke halaman admin setelah login sukses
           }, 2000);
         } else {
-          setError("Login gagal, silakan periksa Username dan Password Anda.");
+          setError("Login gagal,periksa Username dan Password Anda.");
         }
       } else {
-        setError("Login gagal, silakan periksa Username dan Password Anda.");
+        setError("Login gagal,periksa Username dan Password Anda.");
       }
     } catch (error) {
       setError("Terjadi kesalahan saat login. Silakan coba lagi.");
@@ -98,7 +98,11 @@ const LoginPage = () => {
         </h1>
         <p className="mb-6 text-gray-600 text-lg font-mono">Login</p>
 
-        {error && <p className="text-red-500 mb-4">{error}</p>}
+        <div className="text-center">
+          {error && (
+            <p className="mb-4 text-base font-semibold text-red-600">{error}</p>
+          )}
+        </div>
 
         <div className="text-left mb-4 w-80">
           <label className="block text-sm font-medium mb-2 font-mono">

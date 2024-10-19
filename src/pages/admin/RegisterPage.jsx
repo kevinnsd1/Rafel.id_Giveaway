@@ -42,6 +42,14 @@ const RegisterPage = () => {
   };
 
   const handleRegister = async () => {
+    // Cek apakah username mengandung huruf besar
+    if (username !== username.toLowerCase()) {
+      setAlertMessage("Username tidak boleh mengandung huruf besar.");
+      setStatusCode(400);
+      setShowAlert(true);
+      return;
+    }
+
     if (password !== confirmPassword) {
       setAlertMessage("Password dan konfirmasi password tidak cocok.");
       setStatusCode(400);
@@ -125,6 +133,7 @@ const RegisterPage = () => {
       setIsLoading(false);
     }
   };
+
 
   const handleCloseAlert = () => {
     setShowAlert(false);
