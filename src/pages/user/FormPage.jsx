@@ -81,31 +81,41 @@ const FormPage = () => {
     }
   }, [giveawayData.timestamp, winnerData.winnerName, isFetchingWinner]);
 
-  const fetchWinnerData = async () => {
-    try {
-      const apiURL =
-        process.env.VITE_API_URL_GETGIVEAWAYS ||
-        localStorage.getItem("VITE_API_URL_GETGIVEAWAYS");
-      if (!apiURL) {
-        throw new Error("API URL tidak ditemukan.");
-      }
+ const fetchWinnerData = async () => {
+   try {
+     // Correctly access the Vite environment variable
+     const apiURL = import.meta.env.VITE_API_URL_GETGIVEAWAYS;
+     if (!apiURL || !giveawayData.giveawayId) {
+       throw new Error("API URL atau Giveaway ID tidak ditemukan.");
+     }
 
-      const response = await axios.get(`${apiURL}/${giveawayData.giveawayId}`);
-      const data = response.data;
+     // Make the API request
+     const response = await axios.get(`${apiURL}/${giveawayData.giveawayId}`);
 
-      // Update the winnerData state with the fetched information
-      setWinnerData({
-        courier: data.courier || "Belum ada data",
-        receipt: data.receipt || "Belum ada data",
-        winnerName: data.fansWinner?.fullName || "Nama Pemenang Belum Ada",
-      });
+     // Log the response to verify the structure
+     console.log("Response data:", response.data);
 
-      setIsFetchingWinner(false); // Reset fetching state
-    } catch (error) {
-      console.error("Error fetching winner data:", error);
-      setIsFetchingWinner(false); // Ensure fetching state is reset even on error
-    }
-  };
+     const data = response.data.data; // Accessing the nested `data` object
+
+     // Accessing the correct fields in the response
+     const giveaway = data.giveaway || {};
+     const fansWinner = data.fansWinner || {};
+
+     // Update the winnerData state with the fetched information
+     setWinnerData({
+       courier: giveaway.courier || "Belum ada data",
+       receipt: giveaway.receipt || "Belum ada data",
+       winnerName: fansWinner.fullname || "Nama Pemenang Belum Ada",
+     });
+
+     setIsFetchingWinner(false); // Reset fetching state
+   } catch (error) {
+     console.error("Error fetching winner data:", error);
+     setIsFetchingWinner(false); // Reset fetching state in case of error
+   }
+ };
+
+
 
   // Function to handle saving giveawayId to localStorage and state
   const handleParticipate = () => {
