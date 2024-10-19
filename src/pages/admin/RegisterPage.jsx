@@ -50,6 +50,14 @@ const RegisterPage = () => {
       return;
     }
 
+    // Cek apakah username mengandung spasi
+    if (username.includes(" ")) {
+      setAlertMessage("Username tidak boleh mengandung spasi.");
+      setStatusCode(400);
+      setShowAlert(true);
+      return;
+    }
+
     if (password !== confirmPassword) {
       setAlertMessage("Password dan konfirmasi password tidak cocok.");
       setStatusCode(400);
@@ -133,7 +141,6 @@ const RegisterPage = () => {
       setIsLoading(false);
     }
   };
-
 
   const handleCloseAlert = () => {
     setShowAlert(false);
