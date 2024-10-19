@@ -20,7 +20,6 @@ import HomePageAdmin from "./pages/admin/HomePageAdmin"
 import PostingGift from "./pages/admin/PostingHadiah"
 import DetailGiveaway from "./pages/admin/DetailGiveaway"
 import FormSnap from "./pages/user/FormSnap";
-import FormSnap from "./pages/user/FormSnap";
 
 const App = () => {
   return (
