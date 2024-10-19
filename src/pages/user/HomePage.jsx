@@ -5,22 +5,22 @@ import mario from "../../assets/mario.png";
 import Alert from "../../components/Alert";
 
 // Fungsi untuk menghitung countdown dalam format hari, jam, menit, detik
+// Updated getCountdown function without days
 const getCountdown = (endDate) => {
   const now = Date.now();
   const timeLeft = endDate - now;
 
-  const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+  const hours = Math.floor(timeLeft / (1000 * 60 * 60)); // Total hours left
+  const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60)); // Remaining minutes
+  const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000); // Remaining seconds
 
   return {
-    days,
     hours,
     minutes,
     seconds
   };
 };
+
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -175,7 +175,7 @@ const handleFollowClick = (giveaway) => {
                     countdowns[giveaway.id]?.minutes === 0 &&
                     countdowns[giveaway.id]?.seconds === 0
                       ? "Selesai"
-                      : `${countdowns[giveaway.id]?.days || 0} Hari ${
+                      : ` ${
                           countdowns[giveaway.id]?.hours || 0
                         }:${countdowns[giveaway.id]?.minutes || 0}:${
                           countdowns[giveaway.id]?.seconds || 0

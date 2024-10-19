@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Button from "../../components/Button";
 import giftImage from "../../assets/gift2.png";
+import opengift2 from "../../assets/opengift2.png"; // Import the "open gift" image
 import { getCountdown } from "../../utils/countdown";
 
 const FormPage = () => {
@@ -81,41 +82,39 @@ const FormPage = () => {
     }
   }, [giveawayData.timestamp, winnerData.winnerName, isFetchingWinner]);
 
- const fetchWinnerData = async () => {
-   try {
-     // Correctly access the Vite environment variable
-     const apiURL = import.meta.env.VITE_API_URL_GETGIVEAWAYS;
-     if (!apiURL || !giveawayData.giveawayId) {
-       throw new Error("API URL atau Giveaway ID tidak ditemukan.");
-     }
+  const fetchWinnerData = async () => {
+    try {
+      // Correctly access the Vite environment variable
+      const apiURL = import.meta.env.VITE_API_URL_GETGIVEAWAYS;
+      if (!apiURL || !giveawayData.giveawayId) {
+        throw new Error("API URL atau Giveaway ID tidak ditemukan.");
+      }
 
-     // Make the API request
-     const response = await axios.get(`${apiURL}/${giveawayData.giveawayId}`);
+      // Make the API request
+      const response = await axios.get(`${apiURL}/${giveawayData.giveawayId}`);
 
-     // Log the response to verify the structure
-     console.log("Response data:", response.data);
+      // Log the response to verify the structure
+      console.log("Response data:", response.data);
 
-     const data = response.data.data; // Accessing the nested `data` object
+      const data = response.data.data; // Accessing the nested `data` object
 
-     // Accessing the correct fields in the response
-     const giveaway = data.giveaway || {};
-     const fansWinner = data.fansWinner || {};
+      // Accessing the correct fields in the response
+      const giveaway = data.giveaway || {};
+      const fansWinner = data.fansWinner || {};
 
-     // Update the winnerData state with the fetched information
-     setWinnerData({
-       courier: giveaway.courier || "Belum ada data",
-       receipt: giveaway.receipt || "Belum ada data",
-       winnerName: fansWinner.fullname || "Nama Pemenang Belum Ada",
-     });
+      // Update the winnerData state with the fetched information
+      setWinnerData({
+        courier: giveaway.courier || "Belum ada data",
+        receipt: giveaway.receipt || "Belum ada data",
+        winnerName: fansWinner.fullname || "Nama Pemenang Belum Ada",
+      });
 
-     setIsFetchingWinner(false); // Reset fetching state
-   } catch (error) {
-     console.error("Error fetching winner data:", error);
-     setIsFetchingWinner(false); // Reset fetching state in case of error
-   }
- };
-
-
+      setIsFetchingWinner(false); // Reset fetching state
+    } catch (error) {
+      console.error("Error fetching winner data:", error);
+      setIsFetchingWinner(false); // Reset fetching state in case of error
+    }
+  };
 
   // Function to handle saving giveawayId to localStorage and state
   const handleParticipate = () => {
@@ -175,7 +174,7 @@ const FormPage = () => {
           Nama Pemenang akan muncul jika waktu sudah habis...
         </p>
         <img
-          src={giftImage}
+          src={winnerName ? opengift2 : giftImage} // Conditionally change image
           alt="Hadiah"
           className="w-[130px] h-[130px] mx-auto mt-4"
         />
@@ -187,6 +186,10 @@ const FormPage = () => {
             <p className="text-md">{winnerName || "Tidak ada data pemenang"}</p>
             <p className="text-md">Kurir: {courier || "Belum ada data"}</p>
             <p className="text-md">Resi: {receipt || "Belum ada data"}</p>
+            {winnerName && (
+              <p className="text-2xl font-bold mt-4 text-green-500">SELAMAT!</p>
+            )}{" "}
+            {/* Show SELAMAT */}
           </div>
         ) : (
           <p className="text-4xl font-mono font-bold mt-4">
