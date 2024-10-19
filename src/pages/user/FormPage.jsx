@@ -107,6 +107,28 @@ const FormPage = () => {
     }
   };
 
+  // Function to handle saving giveawayId to localStorage and state
+  const handleParticipate = () => {
+    const { giveawayId, title, creatorName, photo, description } = giveawayData;
+
+    // Save giveawayId to localStorage
+    localStorage.setItem(
+      `giveaway_${giveawayId}`,
+      JSON.stringify({
+        giveawayId,
+        title,
+        creatorName,
+        photo,
+        description,
+      })
+    );
+
+    // Navigate to the form page
+    navigate("/form-name", {
+      state: { giveawayId, title, creatorName, photo, description },
+    });
+  };
+
   const { title, creatorName, photo, description } = giveawayData;
   const { courier, receipt, winnerName } = winnerData;
 
@@ -169,17 +191,7 @@ const FormPage = () => {
       </div>
       <div className="w-full max-w-md mt-4">
         <Button
-          onClick={() =>
-            navigate("/form-name", {
-              state: {
-                giveawayId: giveawayData.giveawayId,
-                title,
-                creatorName,
-                photo,
-                description,
-              },
-            })
-          }
+          onClick={handleParticipate} // Call the function to save giveawayId and navigate
           className="w-full py-2 bg-cyan-400 text-black text-lg font-mono font-bold border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
         >
           Isi Biodata Kamu

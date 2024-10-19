@@ -23,7 +23,7 @@ const Card = ({
       </div>
 
       {/* Button Ikuti */}
-      <div className="absolute bottom-5 right-3">
+      <div className="absolute bottom-5 right-3 space-y-2">
         <button
           onClick={handleFollowClick}
           className="bg-cyan-400 text-black py-1 px-1 text-sm rounded-lg border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"

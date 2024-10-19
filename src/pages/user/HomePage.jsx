@@ -82,19 +82,24 @@ const HomePage = () => {
     setShowAlert(true);
   };
 
-  const handleFollowClick = (giveaway) => {
-    localStorage.setItem(`timestamp_${giveaway.id}`, giveaway.timestamp);
-    navigate("/form", {
-      state: {
-        id: giveaway.id,
-        title: giveaway.title,
-        creatorName: giveaway.creator.username,
-        photo: giveaway.photo,
-        description: giveaway.description || "Tidak ada deskripsi tersedia.",
-        timestamp: giveaway.timestamp
-      },
-    });
-  };
+const handleFollowClick = (giveaway) => {
+  // Save the giveawayId in localStorage with a constant key "giveawayId"
+  localStorage.setItem("giveawayId", giveaway.id);
+
+  // Navigate to the form page with details
+  navigate("/form", {
+    state: {
+      id: giveaway.id,
+      title: giveaway.title,
+      creatorName: giveaway.creator.username,
+      photo: giveaway.photo,
+      description: giveaway.description || "Tidak ada deskripsi tersedia.",
+      timestamp: giveaway.timestamp,
+    },
+  });
+};
+
+
 
   const handleAlertClose = () => {
     setShowAlert(false);
@@ -188,7 +193,7 @@ const HomePage = () => {
         <Alert
           onClose={handleAlertClose}
           onRegister={handleRegister}
-          onLogin={handleLogin} // Corrected this line by adding the closing brace
+          onLogin={handleLogin}
         />
       )}
     </div>
