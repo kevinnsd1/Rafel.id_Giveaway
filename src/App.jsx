@@ -19,7 +19,7 @@ import RegisterPage from "./pages/admin/RegisterPage";
 import HomePageAdmin from "./pages/admin/HomePageAdmin"
 import PostingGift from "./pages/admin/PostingHadiah"
 import DetailGiveaway from "./pages/admin/DetailGiveaway"
-import Snap from "./pages/user/FormSnap"
+import FormSnap from "./pages/user/FormSnap";
 import FormSnap from "./pages/user/FormSnap";
 
 const App = () => {
