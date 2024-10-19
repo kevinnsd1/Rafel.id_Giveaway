@@ -37,7 +37,7 @@ export default function SuccessPage() {
         </p>
         <Button
           className="bg-cyan-500 text-black py-2 px-20 rounded hover:bg-cyan-600 font-mono"
-          onClick={() => navigate("/giveaway-result")} // Navigasi ke halaman hasil undian saat tombol Cek Undian ditekan
+          onClick={() => navigate("/home")} // Navigasi ke halaman hasil undian saat tombol Cek Undian ditekan
         >
           Cek Undian
         </Button>

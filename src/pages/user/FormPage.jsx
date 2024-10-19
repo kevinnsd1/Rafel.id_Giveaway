@@ -1,15 +1,117 @@
-import React from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate dari react-router-dom
-import bag from "../../assets/bag.png"; // Gambar hadiah/tas
-import gift from "../../assets/gift2.png"; // Gambar hadiah yang baru di-upload
-import Button from "../../components/Button"; // Mengimpor Button dari folder components
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
+import Button from "../../components/Button";
+import giftImage from "../../assets/gift2.png";
+import { getCountdown } from "../../utils/countdown";
 
-export default function GiveawayPage() {
-  const navigate = useNavigate(); // Inisialisasi useNavigate
+const FormPage = () => {
+  const navigate = useNavigate();
+  const { state } = useLocation();
+
+  const [giveawayData, setGiveawayData] = useState({
+    giveawayId: "",
+    title: "",
+    creatorName: "",
+    photo: "",
+    description: "",
+    timestamp: "",
+  });
+
+  const [countdown, setCountdown] = useState({
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  });
+
+  const [winnerData, setWinnerData] = useState({
+    courier: "",
+    receipt: "",
+    winnerName: "",
+  });
+
+  const [isFetchingWinner, setIsFetchingWinner] = useState(false); // To track if we are fetching the winner
+
+  useEffect(() => {
+    if (state) {
+      const timestampFromStorage = localStorage.getItem(
+        `timestamp_${state.id}`
+      );
+      const formattedTimestamp = timestampFromStorage
+        ? new Date(timestampFromStorage).getTime()
+        : new Date(state.timestamp).getTime();
+      setGiveawayData({
+        giveawayId: state.id,
+        title: state.title,
+        creatorName: state.creatorName,
+        photo: state.photo,
+        description: state.description,
+        timestamp: formattedTimestamp,
+      });
+    }
+  }, [state]);
+
+  useEffect(() => {
+    if (giveawayData.timestamp) {
+      const endDate =
+        new Date(giveawayData.timestamp).getTime() + 3 * 24 * 60 * 60 * 1000; // Adding 3 days to the timestamp
+      const interval = setInterval(() => {
+        const now = new Date().getTime();
+        const timeLeft = endDate - now;
+
+        if (timeLeft > 0) {
+          const totalSeconds = Math.floor(timeLeft / 1000);
+          const hours = Math.floor(totalSeconds / 3600);
+          const minutes = Math.floor((totalSeconds % 3600) / 60);
+          const seconds = totalSeconds % 60;
+          setCountdown({ hours, minutes, seconds });
+        } else {
+          clearInterval(interval);
+          setCountdown({ hours: 0, minutes: 0, seconds: 0 });
+
+          // Fetch winner data only if we are not already fetching
+          if (!isFetchingWinner && !winnerData.winnerName) {
+            setIsFetchingWinner(true); // Prevent multiple fetches
+            fetchWinnerData();
+          }
+        }
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [giveawayData.timestamp, winnerData.winnerName, isFetchingWinner]);
+
+  const fetchWinnerData = async () => {
+    try {
+      const apiURL =
+        process.env.VITE_API_URL_GETGIVEAWAYS ||
+        localStorage.getItem("VITE_API_URL_GETGIVEAWAYS");
+      if (!apiURL) {
+        throw new Error("API URL tidak ditemukan.");
+      }
+
+      const response = await axios.get(`${apiURL}/${giveawayData.giveawayId}`);
+      const data = response.data;
+
+      // Update the winnerData state with the fetched information
+      setWinnerData({
+        courier: data.courier || "Belum ada data",
+        receipt: data.receipt || "Belum ada data",
+        winnerName: data.fansWinner?.fullName || "Nama Pemenang Belum Ada",
+      });
+
+      setIsFetchingWinner(false); // Reset fetching state
+    } catch (error) {
+      console.error("Error fetching winner data:", error);
+      setIsFetchingWinner(false); // Ensure fetching state is reset even on error
+    }
+  };
+
+  const { title, creatorName, photo, description } = giveawayData;
+  const { courier, receipt, winnerName } = winnerData;
 
   return (
     <div className="min-h-screen p-4 bg-white flex flex-col items-center">
-      {/* Header */}
       <header className="w-full bg-white shadow-md p-4 flex justify-between items-center top-0 fixed z-50">
         <button className="text-2xl" onClick={() => navigate("/home")}>
           ←
@@ -19,66 +121,65 @@ export default function GiveawayPage() {
         </h1>
       </header>
 
-      {/* Spacer untuk Header */}
-      <div className="h-16"></div>
-
-      {/* Bagian Pengantar */}
+      <div className="h-20"></div>
       <div className="mt-6 text-center mb-6">
         <p className="font-mono text-xl font-bold">
-          Nagita Slavina lagi ngadain Giveaway nihh!!
+          {creatorName} lagi ngadain Giveaway nihh!!
         </p>
       </div>
-
-      {/* Card Section */}
       <div className="relative bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-4 rounded-lg flex items-center mb-6">
-        {/* Image Section */}
         <img
-          src={bag}
-          alt="Tas"
+          src={photo}
+          alt="Giveaway"
           className="w-[120px] h-[120px] object-contain"
         />
-
-        {/* Content Section */}
         <div className="ml-4 mr-8">
-          <h2 className="font-mono font-bold text-lg">Nagita Slavina</h2>
-          <p className="text-sm">Tas Luis Vuitton</p>
+          <h2 className="font-mono font-bold text-lg">{title}</h2>
+          <p className="text-sm">{description}</p>
         </div>
       </div>
-
-      {/* Deskripsi Section */}
-      <div className="w-full max-w-md bg-white p-4 mt-2 rounded-lg shadow-lg text-left">
-        <h3 className="font-mono text-lg font-bold">Deskripsi :</h3>
-        <p className="mt-2 text-sm">
-          Ini tas yang sering aku pake keluar negeri lohh, yang aku beli di
-          Paris. Yuk ikutan giveaway tas ini, kali aja kalian yang menangin tas
-          nya. Jangan lupa yaa guysss, di tunggu juga giveaway selanjutnya..
-        </p>
-      </div>
-
-      {/* Centered Pemenang Text */}
-      <div className="text-center">
-        <p className="mt-5 text-xs italic text-gray-500">
+      <div className="text-center mt-10">
+        <p className="text-xs italic text-gray-500">
           Nama Pemenang akan muncul jika waktu sudah habis...
         </p>
-      </div>
-
-      {/* Image (Gift) Section */}
-      <div className="mt-5">
-        <img src={gift} alt="Hadiah" className="w-[130px] h-[130px] mx-auto" />
-      </div>
-
-      {/* Countdown Section */}
-      <div className="w-full max-w-md text-center">
-        <p className="text-4xl font-mono font-bold mt-2">15:20:20</p>
-        <p className="mt-2 text-sm font-mono">
+        <img
+          src={giftImage}
+          alt="Hadiah"
+          className="w-[130px] h-[130px] mx-auto mt-4"
+        />
+        {countdown.hours === 0 &&
+        countdown.minutes === 0 &&
+        countdown.seconds === 0 ? (
+          <div className="text-center mt-6">
+            <h2 className="text-lg font-bold">Nama Pemenang:</h2>
+            <p className="text-md">{winnerName || "Tidak ada data pemenang"}</p>
+            <p className="text-md">Kurir: {courier || "Belum ada data"}</p>
+            <p className="text-md">Resi: {receipt || "Belum ada data"}</p>
+          </div>
+        ) : (
+          <p className="text-4xl font-mono font-bold mt-4">
+            {`${countdown.hours || 0}:${countdown.minutes || 0}:${
+              countdown.seconds || 0
+            }`}
+          </p>
+        )}
+        <p className="mt-2 text-sm text-gray-500 font-mono">
           Yuk Ikutan Giveaway ini dengan Klik Tombol dibawah Ini
         </p>
       </div>
-
-      {/* Button Section */}
       <div className="w-full max-w-md mt-4">
         <Button
-          onClick={() => navigate("/form-name")} // Navigasi ke halaman FormName
+          onClick={() =>
+            navigate("/form-name", {
+              state: {
+                giveawayId: giveawayData.giveawayId,
+                title,
+                creatorName,
+                photo,
+                description,
+              },
+            })
+          }
           className="w-full py-2 bg-cyan-400 text-black text-lg font-mono font-bold border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
         >
           Isi Biodata Kamu
@@ -86,4 +187,6 @@ export default function GiveawayPage() {
       </div>
     </div>
   );
-}
+};
+
+export default FormPage;

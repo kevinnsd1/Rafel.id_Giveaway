@@ -14,6 +14,13 @@ import FormPoscode from "./pages/user/FormPoscode";
 import FormAddress from "./pages/user/FormAddress";
 import FormPayment from "./pages/user/FormPayment";
 import PaymentSuccess from "./pages/user/PaymentSucces";
+import LoginPage from "./pages/admin/LoginPage"
+import RegisterPage from "./pages/admin/RegisterPage";
+import HomePageAdmin from "./pages/admin/HomePageAdmin"
+import PostingGift from "./pages/admin/PostingHadiah"
+import DetailGiveaway from "./pages/admin/DetailGiveaway"
+import Snap from "./pages/user/FormSnap"
+import FormSnap from "./pages/user/FormSnap";
 
 const App = () => {
   return (
@@ -33,6 +40,13 @@ const App = () => {
         <Route path="/form-address" element={<FormAddress />} />
         <Route path="/form-payment" element={<FormPayment />} />
         <Route path="/payment-success" element={<PaymentSuccess />} />
+        <Route path="/form-snap" element={<FormSnap />} />
+
+        <Route path="/Login" element={<LoginPage />} />
+        <Route path="/Register" element={<RegisterPage />} />
+        <Route path="/HomePageAdmin" element={<HomePageAdmin />} />
+        <Route path="/PostingGift" element={<PostingGift />} />
+        <Route path="/DetailGiveaway/:id" element={<DetailGiveaway />} />
       </Routes>
     </Router>
   );

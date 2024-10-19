@@ -20,7 +20,7 @@ function LandingPage() {
         <h1 className="text-[32px] font-bold font-mono md:text-5xl">
           Rafel.id
         </h1>
-        <p className="text-gray-600 max-w-md md:max-w-2xl font-mono">
+        <p className="text-gray-600 text-justify px-3 max-w-md md:max-w-2xl font-mono">
           "Rafel adalah platform yang dirancang untuk memudahkan para kreator
           untuk melakukan giveaway pada penggemarnya, dan untuk para fans kalian
           bisa langsung ikuti giveaway dari kreator yang kalian suka. Ayo buruan
@@ -49,7 +49,7 @@ function LandingPage() {
           Ikuti Giveaway
         </Button>
         <Button
-          onClick={() => navigate("/creator-login")} // Navigasi ke halaman login kreator
+          onClick={() => navigate("/Login")} // Navigasi ke halaman login kreator
           className="border-2 bg-white border-black py-2 px-8 hover:bg-gray-100 w-full font-mono"
         >
           Masuk Sebagai Kreator
