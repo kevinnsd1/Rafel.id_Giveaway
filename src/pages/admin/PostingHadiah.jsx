@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../../components/Button"; // Pastikan path ini sesuai
 import OpenGift from "../../assets/opengift.png"; // Pastikan path ini sesuai
-import Bingkai from "../../assets/Bingkai.png"; // Pastikan path ini sesuai
+import Bingkai from "../../assets/bingkai.png"; // Pastikan path ini sesuai
 import { AiOutlineHome, AiOutlineGift, AiOutlineLogout } from "react-icons/ai";
 import AlertLogout from "../../components/AlertLogout"; // Import AlertLogout untuk konfirmasi logout
 import AlertLogin from "../../components/AlertLogin"; // Import AlertLogin untuk menampilkan notifikasi sukses
