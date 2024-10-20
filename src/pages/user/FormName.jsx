@@ -31,6 +31,13 @@ export default function FormName() {
     }
   };
 
+  // Fungsi untuk menangani tekan tombol Enter
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleNext(); // Panggil handleNext jika tombol Enter ditekan
+    }
+  };
+
   return (
     <div className="min-h-screen p-4 bg-white flex flex-col items-center">
       <header className="w-full bg-white shadow-md p-4 flex justify-between items-center top-0 fixed z-50">
@@ -59,6 +66,7 @@ export default function FormName() {
             type="text"
             value={fullName}
             onChange={handleNameChange}
+            onKeyPress={handleKeyPress} // Menambahkan event handler untuk tombol Enter
             className="w-full border-2 border-black p-3 rounded-md text-center"
             placeholder="Masukkan nama lengkap"
           />

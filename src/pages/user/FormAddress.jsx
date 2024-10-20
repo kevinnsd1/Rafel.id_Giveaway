@@ -18,6 +18,7 @@ export default function FormPage() {
 
   const [fullAddress, setFullAddress] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false); // Tambahkan state loading
   const navigate = useNavigate();
 
   const handleNext = async () => {
@@ -25,6 +26,7 @@ export default function FormPage() {
       setError("Alamat lengkap harus diisi.");
     } else {
       setError("");
+      setLoading(true); // Aktifkan loading saat proses dimulai
 
       const payload = {
         giveawayId: String(giveawayId),
@@ -39,7 +41,6 @@ export default function FormPage() {
       };
 
       try {
-        // console.log(payload)
         const response = await fetch(
           import.meta.env.VITE_API_URL_FOLLOWGIVEAWAY ||
             "https://hono-backend-rafel.programmerskye.workers.dev/api/fan",
@@ -66,7 +67,16 @@ export default function FormPage() {
         }
       } catch (error) {
         setError("Terjadi kesalahan dalam mengirim data.");
+      } finally {
+        setLoading(false); // Matikan loading setelah proses selesai
       }
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault(); // Mencegah submit form secara default
+      handleNext(); // Memanggil fungsi handleNext saat tombol Enter ditekan
     }
   };
 
@@ -83,8 +93,8 @@ export default function FormPage() {
                 phoneNumber: String(phoneNumber),
                 selectedProvince: String(selectedProvince),
                 selectedRegency: String(selectedRegency),
-                selectedDistrict: String(selectedDistrict),
-                selectedVillage: String(selectedVillage),
+                selectedDistrictName: String(selectedDistrictName),
+                selectedVillageName: String(selectedVillageName),
                 postCode: String(postCode),
               },
             })
@@ -92,12 +102,11 @@ export default function FormPage() {
         >
           ←
         </button>
+
         <h1 className="flex-grow text-center text-lg font-bold font-mono">
           Rafel.id
         </h1>
       </header>
-
-      <div className="h-16"></div>
 
       <div className="flex-grow flex flex-col justify-center items-center">
         <p className="font-mono text-md font-bold text-center">
@@ -110,6 +119,8 @@ export default function FormPage() {
             onChange={(e) => setFullAddress(e.target.value)}
             className="w-full border-2 border-black p-3 rounded-md text-center"
             placeholder="Masukkan Alamat lengkap"
+            disabled={loading} // Nonaktifkan input saat loading
+            onKeyDown={handleKeyDown} // Tambahkan event listener untuk Enter
           />
           {error && <p className="text-red-500">{error}</p>}
         </div>
@@ -119,8 +130,10 @@ export default function FormPage() {
         <Button
           onClick={handleNext}
           className="w-full py-2 bg-cyan-400 text-black text-lg font-mono font-bold border-2 border-black shadow-lg"
+          disabled={loading} // Nonaktifkan tombol saat loading
         >
-          Kirim Biodata Kamu
+          {loading ? "Mengirim Data..." : "Kirim Biodata Kamu"}{" "}
+          {/* Tampilkan teks loading */}
         </Button>
         {error && <p className="text-red-500">{error}</p>}
       </div>

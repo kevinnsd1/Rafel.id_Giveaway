@@ -82,6 +82,7 @@ export default function FormPayment() {
             console.log("Order details:", data); // Log hasil API untuk verifikasi
           } else {
             setError("Gagal mendapatkan detail order.");
+            console.error("Fetch failed, status:", response.status);
           }
         } catch (error) {
           console.error("Fetch error:", error); // Log error untuk debugging
@@ -90,6 +91,9 @@ export default function FormPayment() {
       };
 
       fetchOrderDetails(); // Memanggil API untuk mendapatkan detail order
+    } else {
+      setError("Order ID tidak ditemukan");
+      console.error("Order ID tidak ditemukan");
     }
   }, [order_Id]); // Memicu fetch ketika order_Id telah di-set
 
@@ -137,16 +141,6 @@ export default function FormPayment() {
           >
             Kembali ke Beranda
           </Button>
-        )}
-
-        {/* Menampilkan detail order jika tersedia */}
-        {orderDetails && (
-          <div className="mt-6">
-            <h3 className="font-bold text-lg">Detail Order:</h3>
-            <pre className="text-sm bg-gray-100 p-2 rounded-lg">
-              {JSON.stringify(orderDetails, null, 2)}
-            </pre>
-          </div>
         )}
       </div>
     </div>

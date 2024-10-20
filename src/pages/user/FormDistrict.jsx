@@ -13,7 +13,7 @@ export default function FormDistrict() {
   const { state } = useLocation();
   const navigate = useNavigate();
 
-  // Ambil giveawayId dari state atau localStorage
+  // Ambil data dari state atau localStorage
   const giveawayId = state?.giveawayId || localStorage.getItem("giveawayId");
   const fullName = state?.fullName || localStorage.getItem("fullName");
   const phoneNumber = state?.phoneNumber || localStorage.getItem("phoneNumber");
@@ -29,6 +29,7 @@ export default function FormDistrict() {
   const [villages, setVillages] = useState([]); // State untuk menyimpan daftar desa/kelurahan
   const [selectedVillageId, setSelectedVillageId] = useState(""); // State untuk menyimpan ID desa/kelurahan yang dipilih
   const [selectedVillageName, setSelectedVillageName] = useState(""); // State untuk menyimpan nama desa/kelurahan yang dipilih
+  const [dropdownOpen, setDropdownOpen] = useState(false); // State untuk memantau status dropdown
   const [error, setError] = useState(""); // State untuk menampilkan pesan error
 
   // Ambil data desa/kelurahan berdasarkan kecamatan yang dipilih
@@ -65,34 +66,16 @@ export default function FormDistrict() {
       // Simpan data desa/kelurahan di localStorage sebagai string
       localStorage.setItem("selectedVillageId", villageIdString);
       localStorage.setItem("selectedVillageName", villageNameString);
+
+      setDropdownOpen(false); // Tutup dropdown setelah pemilihan
     }
   };
 
   // Fungsi ketika tombol Lanjutkan ditekan
   const handleNext = () => {
-    // Pastikan semua data ada, jika tidak ada, gunakan string kosong sebagai fallback
-    const districtId = String(selectedDistrictId || "");
-    const districtName = String(selectedDistrictName || "");
-    const villageId = String(selectedVillageId || "");
-    const villageName = String(selectedVillageName || "");
-
-    if (!villageId) {
+    if (!selectedVillageId) {
       setError("Silakan pilih desa/kelurahan terlebih dahulu.");
     } else {
-      // Simpan semua data termasuk giveawayId ke localStorage
-      if (giveawayId) localStorage.setItem("giveawayId", String(giveawayId));
-      if (fullName) localStorage.setItem("fullName", String(fullName));
-      if (phoneNumber) localStorage.setItem("phoneNumber", String(phoneNumber));
-      if (selectedProvince)
-        localStorage.setItem("selectedProvinceName", String(selectedProvince));
-      if (selectedRegency)
-        localStorage.setItem("selectedCityName", String(selectedRegency));
-      if (districtId) localStorage.setItem("selectedDistrictId", districtId);
-      if (districtName)
-        localStorage.setItem("selectedDistrictName", districtName);
-      if (villageId) localStorage.setItem("selectedVillageId", villageId);
-      if (villageName) localStorage.setItem("selectedVillageName", villageName);
-
       // Navigasi ke halaman berikutnya
       navigate("/form-poscode", {
         state: {
@@ -101,14 +84,31 @@ export default function FormDistrict() {
           phoneNumber: String(phoneNumber),
           selectedProvince: String(selectedProvince),
           selectedRegency: String(selectedRegency),
-          selectedDistrictId: districtId,
-          selectedDistrictName: String(districtName),
-          selectedVillageId: villageId,
-          selectedVillageName: String(villageName),
+          selectedDistrictId: String(selectedDistrictId),
+          selectedDistrictName: String(selectedDistrictName),
+          selectedVillageId: String(selectedVillageId),
+          selectedVillageName: String(selectedVillageName),
         },
       });
     }
   };
+
+  // Fungsi untuk mendeteksi tekan tombol Enter dan lanjut ke halaman berikutnya
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" && !dropdownOpen) {
+      handleNext(); // Navigasi ke halaman berikutnya jika Enter ditekan dan dropdown tertutup
+    }
+  };
+
+  // Tambahkan event listener untuk mendeteksi tekan tombol Enter
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyPress);
+
+    // Hapus event listener ketika komponen di-unmount
+    return () => {
+      document.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [dropdownOpen, selectedVillageId]); // Dependency untuk memperbarui listener ketika dropdown berubah
 
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-center p-4">
@@ -119,13 +119,13 @@ export default function FormDistrict() {
           onClick={() =>
             navigate("/form-subdistrict", {
               state: {
-                giveawayId: String(giveawayId), // Pastikan giveawayId diteruskan ketika kembali
+                giveawayId: String(giveawayId),
                 fullName: String(fullName),
                 phoneNumber: String(phoneNumber),
                 selectedProvince: String(selectedProvince),
                 selectedRegency: String(selectedRegency),
-                selectedDistrictId: districtId,
-                selectedDistrictName: String(districtName),
+                selectedDistrictId: String(selectedDistrictId),
+                selectedDistrictName: String(selectedDistrictName),
               },
             })
           }
@@ -137,9 +137,6 @@ export default function FormDistrict() {
         </h1>
       </header>
 
-      {/* Spacer for Header */}
-      <div className="h-16"></div>
-
       {/* Form Section */}
       <div className="flex-grow flex flex-col justify-center items-center">
         <p className="font-mono text-md font-bold text-center">
@@ -147,11 +144,18 @@ export default function FormDistrict() {
         </p>
         <div className="mt-10 max-w-lg flex flex-col items-center w-full space-y-4">
           {/* Dropdown Section */}
-          <Select onValueChange={(value) => handleVillageSelection(value)}>
+          <Select
+            onValueChange={(value) => handleVillageSelection(value)}
+            onOpenChange={(open) => setDropdownOpen(open)} // Memantau status buka/tutup dropdown
+          >
             <SelectTrigger className="w-[300px] border-2 border-black">
               <SelectValue placeholder="Pilih Desa/Kelurahan" />
             </SelectTrigger>
-            <SelectContent side="bottom" sideOffset={5}>
+            <SelectContent
+              side="bottom"
+              sideOffset={5}
+              style={{ maxHeight: "200px", overflowY: "auto" }}
+            >
               {villages.map((village) => (
                 <SelectItem key={village.id} value={village.id}>
                   {village.name}

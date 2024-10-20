@@ -1,25 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom"; // Menggunakan useLocation untuk mengambil state dari halaman sebelumnya
-import Button from "../../components/Button"; // Mengimpor Button dari folder components
+import { useNavigate, useLocation } from "react-router-dom";
+import Button from "../../components/Button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../components/Dropdown"; // Pastikan path Dropdown sesuai dengan struktur proyek Anda
+} from "../../components/Dropdown";
 
 export default function FormProvince() {
-  const { state } = useLocation(); // Mengambil state yang dikirim dari halaman sebelumnya
-  const { id, fullName, phoneNumber } = state || {}; // Destructure data id, fullName, dan phoneNumber dari state
+  const { state } = useLocation();
+  const { id, fullName, phoneNumber } = state || {};
 
-  const [provinces, setProvinces] = useState([]); // State untuk menyimpan daftar provinsi
-  const [selectedProvinceId, setSelectedProvinceId] = useState(""); // State untuk menyimpan ID provinsi yang dipilih
-  const [selectedProvinceName, setSelectedProvinceName] = useState(""); // State untuk menyimpan nama provinsi yang dipilih
-  const [error, setError] = useState(""); // State untuk menyimpan pesan error
-  const navigate = useNavigate(); // Menggunakan useNavigate untuk navigasi
+  const [provinces, setProvinces] = useState([]);
+  const [selectedProvinceId, setSelectedProvinceId] = useState("");
+  const [selectedProvinceName, setSelectedProvinceName] = useState("");
+  const [error, setError] = useState("");
+  const [dropdownOpen, setDropdownOpen] = useState(false); // State untuk memeriksa apakah dropdown terbuka atau tertutup
+  const navigate = useNavigate();
 
-  // Fetch data dari API saat komponen pertama kali di-mount
   useEffect(() => {
     async function fetchProvinces() {
       try {
@@ -27,7 +27,7 @@ export default function FormProvince() {
           import.meta.env.VITE_API_URL_WILAYAHPROVINSI
         );
         const data = await response.json();
-        setProvinces(data); // Simpan data provinsi ke state
+        setProvinces(data);
       } catch (error) {
         console.error("Error fetching provinces:", error);
       }
@@ -36,32 +36,59 @@ export default function FormProvince() {
     fetchProvinces();
   }, []);
 
-  // Fungsi untuk menyimpan provinsi yang dipilih dan set ke localStorage
+  // Fungsi untuk menangani pemilihan provinsi
   const handleProvinceSelection = (id, name) => {
-    setSelectedProvinceId(id); // Simpan ID provinsi yang dipilih
-    setSelectedProvinceName(name); // Simpan Nama provinsi yang dipilih
-    setError(""); // Hapus error jika ada provinsi yang dipilih
-    localStorage.setItem("selectedProvinceId", id); // Simpan ID provinsi ke localStorage (opsional)
-    localStorage.setItem("selectedProvinceName", name); // Simpan Nama provinsi ke localStorage (opsional)
+    setSelectedProvinceId(id);
+    setSelectedProvinceName(name);
+    setError("");
+    localStorage.setItem("selectedProvinceId", id);
+    localStorage.setItem("selectedProvinceName", name);
+
+    // Dropdown sudah ditutup setelah pemilihan
+    setDropdownOpen(false);
+
+    // Fokuskan pada tombol "Lanjutkan" setelah provinsi dipilih
+    document.querySelector("button").focus();
   };
 
-  // Fungsi untuk handle saat tombol Lanjutkan diklik
+  // Fungsi untuk mendeteksi apakah dropdown sedang terbuka
+  const handleDropdownToggle = () => {
+    setDropdownOpen((prev) => !prev);
+  };
+
+  // Fungsi untuk navigasi ke halaman berikutnya
   const handleNext = () => {
     if (!selectedProvinceId || !selectedProvinceName) {
-      setError("Silakan pilih provinsi terlebih dahulu."); // Jika belum ada provinsi yang dipilih, tampilkan error
+      setError("Silakan pilih provinsi terlebih dahulu.");
     } else {
-      // Navigasi ke halaman berikutnya, kirim semua data (id, fullName, phoneNumber, selectedProvinceId, selectedProvinceName)
       navigate("/form-city", {
         state: {
           id,
           fullName,
           phoneNumber,
           selectedProvinceId,
-          selectedProvinceName, // Teruskan juga nama provinsi
+          selectedProvinceName,
         },
       });
     }
   };
+
+  // Fungsi untuk mendeteksi tombol Enter dan menghindari pembukaan dropdown
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" && !dropdownOpen) {
+      handleNext(); // Navigasi ke halaman berikutnya hanya jika dropdown tertutup
+    }
+  };
+
+  useEffect(() => {
+    // Tambahkan event listener untuk Enter setelah dropdown tertutup
+    document.addEventListener("keydown", handleKeyPress);
+
+    // Hapus event listener ketika komponen di-unmount
+    return () => {
+      document.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [dropdownOpen, selectedProvinceId]);
 
   return (
     <div className="min-h-screen p-4 bg-white flex flex-col items-center">
@@ -80,28 +107,28 @@ export default function FormProvince() {
         </h1>
       </header>
 
-      {/* Spacer untuk Header */}
-      <div className="h-16"></div>
-
       {/* Form Section */}
       <div className="flex-grow flex flex-col justify-center items-center">
         <p className="font-mono text-md font-bold text-center">
           Pilih Provinsi Kamu:
         </p>
         <div className="mt-10 max-w-lg flex flex-col items-center w-full space-y-4">
-          {/* Dropdown Section menggunakan ShadCN Select */}
           <Select
             onValueChange={(value) => {
               const selected = provinces.find(
                 (province) => province.id === value
               );
-              handleProvinceSelection(selected.id, selected.name);
+              handleProvinceSelection(selected.id, selected.name); // Simpan pilihan provinsi
             }}
+            onOpenChange={handleDropdownToggle} // Deteksi perubahan buka/tutup dropdown
           >
-            <SelectTrigger className="w-[180px] border-2 border-black">
-              <SelectValue placeholder="Pilih Provinsi" />
+            <SelectTrigger className="w-[300px] border-2 border-black">
+              <SelectValue placeholder="Pilih Provinsi" /> {/* Placeholder */}
             </SelectTrigger>
-            <SelectContent side="bottom">
+            <SelectContent
+              side="bottom"
+              style={{ maxHeight: "200px", overflowY: "auto" }}
+            >
               {provinces.map((province) => (
                 <SelectItem key={province.id} value={province.id}>
                   {province.name}
@@ -110,8 +137,6 @@ export default function FormProvince() {
             </SelectContent>
           </Select>
         </div>
-
-        {/* Tampilkan pesan error jika ada */}
         {error && <p className="text-red-500 mt-2">{error}</p>}
       </div>
 
@@ -119,7 +144,7 @@ export default function FormProvince() {
       <div className="w-full max-w-lg mt-4">
         <Button
           className="border-2 bg-cyan-500 border-black py-2 px-8 hover:bg-gray-100 w-full font-mono"
-          onClick={handleNext} // Panggil fungsi handleNext
+          onClick={handleNext}
         >
           Lanjutkan
         </Button>

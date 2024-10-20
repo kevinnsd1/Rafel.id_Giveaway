@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../../components/Button"; // Import komponen Button
 import Door from "../../assets/pintu.png";
-import Alert2 from "../../components/Alert2"; // Import komponen Alert
+import Alert2 from "../../components/Alert2"; // Import komponen Alert2 untuk notifikasi
 import AlertPenggemar from "../../components/AlertPenggemar"; // Import komponen AlertPenggemar
 
 const RegisterPage = () => {
@@ -14,10 +14,10 @@ const RegisterPage = () => {
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
-  const [isRegistrationSuccess, setIsRegistrationSuccess] = useState(false);
   const [statusCode, setStatusCode] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showPenggemarAlert, setShowPenggemarAlert] = useState(false); // State untuk AlertPenggemar
+  const [token, setToken] = useState(null); // State untuk token
 
   const navigate = useNavigate();
 
@@ -87,20 +87,32 @@ const RegisterPage = () => {
       setStatusCode(response.status);
 
       if (response.status === 201) {
-        // Simpan username di localStorage setelah berhasil registrasi
-        localStorage.setItem("username", username);
+        const result = await response.json();
+        const token = result.data.token; // Asumsi token berada dalam result.data.token
 
-        setAlertMessage("Registrasi berhasil");
+        // Simpan username, token, dan flag 'isNewUser' di localStorage setelah berhasil registrasi
+        localStorage.setItem("username", username);
+        localStorage.setItem("token", token); // Simpan token di localStorage
+        localStorage.setItem("isNewUser", "true"); // Menyimpan status pengguna baru
+
+        // Simpan token di state
+        setToken(token);
+
+        // Tampilkan alert sukses
+        setAlertMessage("Registrasi berhasil. Selamat datang!");
         setShowAlert(true);
-        setIsRegistrationSuccess(true);
+
+        // Redirect ke halaman HomePageAdmin setelah 2 detik
+        setTimeout(() => {
+          navigate("/HomePageAdmin");
+        }, 2000);
       } else if (response.status === 400) {
         setAlertMessage("Akun sudah ada atau gagal mendaftarkan akun.");
         setShowAlert(true);
-        setIsRegistrationSuccess(false);
       } else {
         const contentType = response.headers.get("content-type");
         if (
-          !response.ok ||
+          !response.status ||
           !contentType ||
           !contentType.includes("application/json")
         ) {
@@ -124,11 +136,9 @@ const RegisterPage = () => {
         if (result.status) {
           setAlertMessage("Akunmu sudah terdaftar.");
           setShowAlert(true);
-          setIsRegistrationSuccess(true);
         } else {
           setAlertMessage(result.message || "Registrasi gagal.");
           setShowAlert(true);
-          setIsRegistrationSuccess(false);
         }
       }
     } catch (error) {
@@ -136,7 +146,6 @@ const RegisterPage = () => {
       setAlertMessage("Terjadi kesalahan dalam melakukan registrasi.");
       setStatusCode(400);
       setShowAlert(true);
-      setIsRegistrationSuccess(false);
     } finally {
       setIsLoading(false);
     }
@@ -144,9 +153,6 @@ const RegisterPage = () => {
 
   const handleCloseAlert = () => {
     setShowAlert(false);
-    if (isRegistrationSuccess) {
-      navigate("/HomePageAdmin"); // Auto-login ke halaman home
-    }
   };
 
   const handleConfirmPenggemar = () => {

@@ -17,12 +17,19 @@ export default function FormCity() {
     phoneNumber,
     selectedProvinceId,
     selectedProvinceName,
+    selectedRegencyId: initialRegencyId,
+    selectedRegencyName: initialRegencyName,
   } = state || {}; // Destructure data dari state
 
   const [regencies, setRegencies] = useState([]); // State untuk menyimpan daftar kabupaten/kota
-  const [selectedRegencyId, setSelectedRegencyId] = useState(""); // State untuk menyimpan ID kabupaten/kota yang dipilih
-  const [selectedRegencyName, setSelectedRegencyName] = useState(""); // State untuk menyimpan nama kabupaten/kota yang dipilih
+  const [selectedRegencyId, setSelectedRegencyId] = useState(
+    initialRegencyId || ""
+  ); // State untuk menyimpan ID kabupaten/kota yang dipilih
+  const [selectedRegencyName, setSelectedRegencyName] = useState(
+    initialRegencyName || ""
+  ); // State untuk menyimpan nama kabupaten/kota yang dipilih
   const [error, setError] = useState(""); // State untuk menyimpan pesan error
+  const [dropdownOpen, setDropdownOpen] = useState(false); // State untuk mengetahui apakah dropdown terbuka atau tidak
   const navigate = useNavigate(); // Gunakan useNavigate
 
   // Fetch data kabupaten/kota sesuai dengan provinsi yang dipilih
@@ -31,7 +38,9 @@ export default function FormCity() {
       async function fetchRegencies() {
         try {
           const response = await fetch(
-            `${import.meta.env.VITE_API_URL_WILAYAHKOTA}/${selectedProvinceId}.json`
+            `${
+              import.meta.env.VITE_API_URL_WILAYAHKOTA
+            }/${selectedProvinceId}.json`
           );
           const data = await response.json();
           setRegencies(data); // Simpan data kabupaten/kota ke state
@@ -49,6 +58,8 @@ export default function FormCity() {
     setSelectedRegencyId(value); // Simpan ID kabupaten/kota yang dipilih
     setSelectedRegencyName(selectedRegency ? selectedRegency.name : ""); // Simpan nama kabupaten/kota yang dipilih
     setError(""); // Hapus pesan error jika pengguna memilih kota
+    setDropdownOpen(false); // Tutup dropdown setelah memilih
+
     localStorage.setItem(
       "selectedCityId",
       selectedRegency ? selectedRegency.id : "" // Simpan ID kota yang dipilih ke localStorage
@@ -79,6 +90,23 @@ export default function FormCity() {
     }
   };
 
+  // Fungsi untuk mendeteksi tekan tombol Enter dan lanjut ke halaman berikutnya
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" && !dropdownOpen) {
+      handleNext(); // Navigasi ke halaman berikutnya jika Enter ditekan dan dropdown tertutup
+    }
+  };
+
+  // Tambahkan event listener untuk mendeteksi tekan tombol Enter
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyPress);
+
+    // Hapus event listener ketika komponen di-unmount
+    return () => {
+      document.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [dropdownOpen, selectedRegencyId]); // Tambahkan dependency agar event listener memperhatikan state ini
+
   return (
     <div className="min-h-screen p-4 bg-white flex flex-col items-center">
       {/* Header */}
@@ -104,9 +132,6 @@ export default function FormCity() {
         </h1>
       </header>
 
-      {/* Spacer untuk Header */}
-      <div className="h-16"></div>
-
       {/* Form Section */}
       <div className="flex-grow flex flex-col justify-center items-center">
         <p className="font-mono text-md font-bold text-center">
@@ -114,11 +139,19 @@ export default function FormCity() {
         </p>
         <div className="mt-10 max-w-lg flex flex-col items-center w-full space-y-4">
           {/* Dropdown Section menggunakan ShadCN Select */}
-          <Select onValueChange={handleCitySelection}>
-            <SelectTrigger className="w-[180px] border-2 border-black">
+          <Select
+            onValueChange={handleCitySelection}
+            onOpenChange={(open) => setDropdownOpen(open)} // Menentukan status buka/tutup dropdown
+            value={selectedRegencyId} // Pastikan value dari dropdown diisi dengan selectedRegencyId
+          >
+            <SelectTrigger className="w-[300px] border-2 border-black">
               <SelectValue placeholder="Pilih Kabupaten/Kota" />
             </SelectTrigger>
-            <SelectContent side="bottom" sideOffset={5}>
+            <SelectContent
+              side="bottom"
+              sideOffset={5}
+              style={{ maxHeight: "200px", overflowY: "auto" }} // Tambahkan style untuk scroll
+            >
               {regencies.map((regency) => (
                 <SelectItem key={regency.id} value={regency.id}>
                   {regency.name}

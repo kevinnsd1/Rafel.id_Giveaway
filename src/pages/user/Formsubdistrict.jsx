@@ -29,9 +29,11 @@ export default function FormSubdistrict() {
   const [selectedDistrictName, setSelectedDistrictName] = useState(
     initialDistrictName || ""
   );
+  const [dropdownOpen, setDropdownOpen] = useState(false); // Untuk memantau status dropdown
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  // Fetching districts based on the selected regency ID
   useEffect(() => {
     if (selectedRegencyId) {
       async function fetchDistricts() {
@@ -62,6 +64,7 @@ export default function FormSubdistrict() {
       setSelectedDistrictId(selectedDistrict.id);
       setSelectedDistrictName(selectedDistrict.name);
       setError("");
+      setDropdownOpen(false); // Menutup dropdown setelah memilih kecamatan
 
       // Store selected district ID and name in localStorage
       localStorage.setItem("selectedDistrictId", selectedDistrict.id);
@@ -87,6 +90,23 @@ export default function FormSubdistrict() {
       });
     }
   };
+
+  // Fungsi untuk mendeteksi tekan tombol Enter dan lanjut ke halaman berikutnya
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" && !dropdownOpen) {
+      handleNext(); // Navigasi ke halaman berikutnya jika Enter ditekan dan dropdown tertutup
+    }
+  };
+
+  // Tambahkan event listener untuk mendeteksi tekan tombol Enter
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyPress);
+
+    // Hapus event listener ketika komponen di-unmount
+    return () => {
+      document.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [dropdownOpen, selectedDistrictId]); // Tambahkan dependency agar event listener memperhatikan state ini
 
   return (
     <div className="min-h-screen p-4 bg-white flex flex-col items-center">
@@ -115,18 +135,24 @@ export default function FormSubdistrict() {
         </h1>
       </header>
 
-      <div className="h-16"></div>
-
       <div className="flex-grow flex flex-col justify-center items-center">
         <p className="font-mono text-md font-bold text-center">
           Pilih Kecamatan Kamu:
         </p>
         <div className="mt-10 max-w-lg flex flex-col items-center w-full space-y-4">
-          <Select onValueChange={handleDistrictSelection}>
-            <SelectTrigger className="w-[180px] border-2 border-black">
+          <Select
+            onValueChange={handleDistrictSelection}
+            onOpenChange={(open) => setDropdownOpen(open)} // Menentukan status buka/tutup dropdown
+          >
+            <SelectTrigger className="w-[300px] border-2 border-black">
               <SelectValue placeholder="Pilih Kecamatan" />
             </SelectTrigger>
-            <SelectContent side="bottom" sideOffset={5}>
+
+            <SelectContent
+              side="bottom"
+              sideOffset={5}
+              style={{ maxHeight: "200px", overflowY: "auto" }} // Tambahkan style untuk scroll
+            >
               {districts.map((district) => (
                 <SelectItem key={district.id} value={district.id}>
                   {district.name}

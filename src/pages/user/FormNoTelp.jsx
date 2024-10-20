@@ -33,6 +33,13 @@ export default function FormPhone() {
     }
   };
 
+  // Fungsi untuk menangani tekan tombol Enter
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleNext(); // Panggil handleNext jika tombol Enter ditekan
+    }
+  };
+
   return (
     <div className="min-h-screen p-4 bg-white flex flex-col items-center">
       {/* Header */}
@@ -48,19 +55,17 @@ export default function FormPhone() {
         </h1>
       </header>
 
-      {/* Spacer untuk Header */}
-      <div className="h-16"></div>
-
       {/* Form Section */}
       <div className="flex-grow flex flex-col justify-center items-center">
         <p className="font-mono text-md font-bold text-center">
-          Tuliskan Nomor Handphone Kamu :
+          Tuliskan Nomor Handphone Kamu:
         </p>
         <div className="mt-10 max-w-lg flex flex-col items-center w-full space-y-4">
           <input
             type="text"
             value={phoneNumber} // Mengikat input ke state phoneNumber
             onChange={handlePhoneChange} // Menyimpan perubahan input ke state
+            onKeyPress={handleKeyPress} // Tambahkan handler untuk tombol Enter
             className="w-full border-2 border-black p-3 rounded-md text-center"
             placeholder="Masukkan Nomor Handphone"
           />

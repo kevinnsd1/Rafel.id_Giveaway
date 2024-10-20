@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineHome, AiOutlineGift, AiOutlineLogout } from "react-icons/ai";
-import { getCountdown } from "../../utils/countdown"; // Gunakan util untuk countdown
 import AlertLogout from "../../components/AlertLogout"; // Import komponen AlertLogout
 import mario from "../../assets/mario.png";
 
@@ -14,12 +13,18 @@ const HomePageAdmin = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState(""); // State untuk menangani pencarian
+  const [isNewUser, setIsNewUser] = useState(false); // State untuk memeriksa apakah pengguna baru
 
   // Ambil username dari localStorage ketika halaman dimuat
   useEffect(() => {
     const storedUsername = localStorage.getItem("username");
+    const newUserFlag = localStorage.getItem("isNewUser");
     if (storedUsername) {
       setUsername(storedUsername);
+    }
+    if (newUserFlag === "true") {
+      setIsNewUser(true);
+      localStorage.removeItem("isNewUser"); // Hapus flag pengguna baru setelah menampilkan pesan
     }
   }, []);
 
@@ -248,6 +253,8 @@ const HomePageAdmin = () => {
         <img src={mario} alt="Character" className="w-20 h-20" />
         <h2 className="text-xl font-bold mt-4">Hadiah Yang Kamu Posting</h2>
 
+        {/* Tampilkan pesan untuk pengguna baru */}
+
         {/* Pencarian Giveaway */}
         <div className="w-full max-w-md mt-8">
           <input
@@ -260,6 +267,20 @@ const HomePageAdmin = () => {
         </div>
 
         <h3 className="mt-6 text-lg font-bold">Giveaway kamu</h3>
+
+        {isNewUser && (
+          <div className="mt-6 bg-cyan-500 text-center p-4 rounded-lg shadow-md">
+            <h3 className="text-lg font-bold text-white-500 mb-2">
+              Yuk Buat Giveaway Pertamamu!
+            </h3>
+            <button
+              onClick={() => handleNavigation("/PostingGift")}
+              className="px-4 py-2 bg-orange-500 text-white rounded-lg shadow-lg hover:bg-cyan-600 transition"
+            >
+              Buat Giveaway
+            </button>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 gap-6 justify-items-center mt-4 max-w-4xl w-full">
           {loading ? (

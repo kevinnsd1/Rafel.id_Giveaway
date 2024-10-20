@@ -40,11 +40,13 @@ const PostingHadiah = () => {
     setLoading(true);
     setError(null);
 
-    const token = localStorage.getItem("token"); // Ambil token dari localStorage
+    const token = localStorage.getItem("token"); // Ambil token dari localStorage, baik dari login atau register
 
     // Pastikan token tersedia
     if (!token) {
-      setError("Token tidak tersedia, silakan login terlebih dahulu.");
+      setError(
+        "Token tidak tersedia, silakan login atau register terlebih dahulu."
+      );
       setLoading(false);
       return;
     }
