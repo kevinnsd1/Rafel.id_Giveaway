@@ -6,6 +6,7 @@ import Bingkai from "../../assets/bingkai.png"; // Pastikan path ini sesuai
 import { AiOutlineHome, AiOutlineGift, AiOutlineLogout } from "react-icons/ai";
 import AlertLogout from "../../components/AlertLogout"; // Import AlertLogout untuk konfirmasi logout
 import AlertLogin from "../../components/AlertLogin"; // Import AlertLogin untuk menampilkan notifikasi sukses
+import imageCompression from "browser-image-compression"; // Import library untuk kompresi gambar
 
 const PostingHadiah = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false); // State untuk mengontrol sidebar
@@ -109,12 +110,30 @@ const PostingHadiah = () => {
     }
   };
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const selectedFile = e.target.files[0];
-    setFile(selectedFile); // Mengambil file yang diupload
     if (selectedFile) {
-      // Buat URL sementara untuk menampilkan gambar preview
-      setPreviewImage(URL.createObjectURL(selectedFile));
+      try {
+        // Opsi untuk kompresi gambar
+        const options = {
+          maxSizeMB: 1, // Ukuran maksimum file dalam MB (atur sesuai kebutuhan)
+          maxWidthOrHeight: 500, // Maksimal lebar atau tinggi gambar dalam piksel
+          useWebWorker: true, // Gunakan Web Worker untuk meningkatkan performa
+        };
+
+        // Kompresi gambar
+        const compressedFile = await imageCompression(selectedFile, options);
+
+        // Update state dengan gambar yang sudah di-compress
+        setFile(compressedFile);
+
+        // Buat URL sementara untuk menampilkan gambar preview
+        const compressedImageURL = URL.createObjectURL(compressedFile);
+        setPreviewImage(compressedImageURL);
+      } catch (error) {
+        console.error("Gagal mengompres gambar:", error);
+        setError("Gagal mengompres gambar. Silakan coba gambar lain.");
+      }
     }
   };
 
