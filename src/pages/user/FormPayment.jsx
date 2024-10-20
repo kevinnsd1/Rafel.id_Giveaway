@@ -113,7 +113,7 @@ export default function FormPayment() {
       <div className="flex flex-col items-center bg-white p-6 rounded-lg shadow-md max-w-md w-full text-center mt-8">
         <img src={Rainbow} alt="Rainbow" className="w-45 h-40 mb-4" />
         <h2 className="font-bold font-mono text-lg mb-4">
-          Selamat Biodata Kamu Sudah Tersimpan !!!
+          Selamat Biodata Kamu Sudah Tersimpan !!!!
         </h2>
         <p className="text-sm font-mono mb-6">
           Selamat biodata kamu sudah lengkap dan akan digunakan untuk
