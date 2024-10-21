@@ -92,7 +92,7 @@ export default function FormPayment() {
 
       fetchOrderDetails(); // Memanggil API untuk mendapatkan detail order
     } else {
-      setError("Pastikan data sudah lengkap");
+      setError("Pastikan data yang dikirim benar");
     }
   }, [order_Id]); // Memicu fetch ketika order_Id telah di-set
 
