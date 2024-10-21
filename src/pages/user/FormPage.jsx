@@ -4,7 +4,6 @@ import axios from "axios";
 import Button from "../../components/Button";
 import giftImage from "../../assets/gift2.png";
 import opengift2 from "../../assets/opengift2.png"; // Import the "open gift" image
-import { getCountdown } from "../../utils/countdown";
 
 const FormPage = () => {
   const navigate = useNavigate();
@@ -132,8 +131,11 @@ const FormPage = () => {
       })
     );
 
-    // Navigate to the form page
-    navigate("/form-name", {
+    // Format the creator name to be URL-friendly (replace spaces with dashes)
+    const formattedCreatorName = creatorName.toLowerCase().replace(/\s+/g, "-");
+
+    // Navigate to the form page with /kreator/nama-kreator format in the URL
+    navigate(`/form-name`, {
       state: { giveawayId, title, creatorName, photo, description },
     });
   };

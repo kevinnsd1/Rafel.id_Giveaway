@@ -14,11 +14,11 @@ import FormPoscode from "./pages/user/FormPoscode";
 import FormAddress from "./pages/user/FormAddress";
 import FormPayment from "./pages/user/FormPayment";
 import PaymentSuccess from "./pages/user/PaymentSucces";
-import LoginPage from "./pages/admin/LoginPage"
+import LoginPage from "./pages/admin/LoginPage";
 import RegisterPage from "./pages/admin/RegisterPage";
-import HomePageAdmin from "./pages/admin/HomePageAdmin"
-import PostingGift from "./pages/admin/PostingHadiah"
-import DetailGiveaway from "./pages/admin/DetailGiveaway"
+import HomePageAdmin from "./pages/admin/HomePageAdmin";
+import PostingGift from "./pages/admin/PostingHadiah";
+import DetailGiveaway from "./pages/admin/DetailGiveaway";
 import FormSnap from "./pages/user/FormSnap";
 
 const App = () => {
@@ -27,7 +27,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/home" element={<HomePage />} />
-        <Route path="/form" element={<FormPage />} />
+        <Route path="/:creatorName" element={<FormPage />} />
         <Route path="/form-done" element={<FormDonePage />} />
         <Route path="/form-name" element={<FormName />} />
         <Route path="/form-phone" element={<FormNoTelp />} />
@@ -46,6 +46,9 @@ const App = () => {
         <Route path="/HomePageAdmin" element={<HomePageAdmin />} />
         <Route path="/PostingGift" element={<PostingGift />} />
         <Route path="/DetailGiveaway/:id" element={<DetailGiveaway />} />
+
+        {/* Rute dinamis untuk kreator */}
+        <Route path="/kreator/:creatorName/form-name" element={<FormName />} />
       </Routes>
     </Router>
   );

@@ -83,11 +83,16 @@ const HomePage = () => {
   };
 
 const handleFollowClick = (giveaway) => {
+  // Format the creator name to be URL-friendly (replace spaces with dashes)
+  const formattedCreatorName = giveaway.creator.username
+    .toLowerCase()
+    .replace(/\s+/g, "-");
+
   // Save the giveawayId in localStorage with a constant key "giveawayId"
   localStorage.setItem("giveawayId", giveaway.id);
 
-  // Navigate to the form page with details
-  navigate("/form", {
+  // Navigate to the form page with the creator's name in the URL
+  navigate(`/${formattedCreatorName}`, {
     state: {
       id: giveaway.id,
       title: giveaway.title,
@@ -98,6 +103,7 @@ const handleFollowClick = (giveaway) => {
     },
   });
 };
+
 
 
 
