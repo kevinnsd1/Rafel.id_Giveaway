@@ -99,6 +99,16 @@ const DetailGiveaway = () => {
 
   // Function to call API to generate the winner
   const handleGeneratePemenang = async () => {
+    if (
+      countdown.days > 0 ||
+      countdown.hours > 0 ||
+      countdown.minutes > 0 ||
+      countdown.seconds > 0
+    ) {
+      setError("Giveaway belum berakhir, tidak dapat generate pemenang.");
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
@@ -149,8 +159,14 @@ const DetailGiveaway = () => {
         setAlamatLengkap(winnerData.alamatLengkap);
         setNoResi(winnerData.noResi);
         setKurir(kurir);
+
+        // Save winner data to localStorage after generation
+        localStorage.setItem(
+          `winnerData_${userId}_${giveawayId}`,
+          JSON.stringify(winnerData)
+        );
       } else {
-        setError("giveaway belum 3 hari.");
+        setError("Giveaway belum 3 hari.");
       }
     } catch (error) {
       console.error("Error during request:", error);
@@ -324,7 +340,13 @@ const DetailGiveaway = () => {
               <Button
                 className="mt-4 bg-blue-500 text-white py-1 px-3 text-base rounded"
                 onClick={handleGeneratePemenang}
-                disabled={loading}
+                disabled={
+                  loading ||
+                  countdown.days > 0 ||
+                  countdown.hours > 0 ||
+                  countdown.minutes > 0 ||
+                  countdown.seconds > 0
+                }
               >
                 {loading ? "Loading..." : "Generate pemenang"}
               </Button>
@@ -342,6 +364,12 @@ const DetailGiveaway = () => {
               onChange={(e) => setNamaPemenang(e.target.value)}
               className="border border-gray-400 w-48 px-2 py-1"
               placeholder="Masukkan nama pemenang"
+              disabled={
+                countdown.days > 0 ||
+                countdown.hours > 0 ||
+                countdown.minutes > 0 ||
+                countdown.seconds > 0
+              }
             />
           </div>
 
@@ -352,6 +380,12 @@ const DetailGiveaway = () => {
               onChange={(e) => setNoTelpon(e.target.value)}
               className="border border-gray-400 w-48 px-2 py-1"
               placeholder="Masukkan no telpon"
+              disabled={
+                countdown.days > 0 ||
+                countdown.hours > 0 ||
+                countdown.minutes > 0 ||
+                countdown.seconds > 0
+              }
             />
           </div>
 
@@ -362,6 +396,12 @@ const DetailGiveaway = () => {
               onChange={(e) => setProvinsi(e.target.value)}
               className="border border-gray-400 w-48 px-2 py-1"
               placeholder="Masukkan provinsi"
+              disabled={
+                countdown.days > 0 ||
+                countdown.hours > 0 ||
+                countdown.minutes > 0 ||
+                countdown.seconds > 0
+              }
             />
           </div>
 
@@ -372,6 +412,12 @@ const DetailGiveaway = () => {
               onChange={(e) => setKabupaten(e.target.value)}
               className="border border-gray-400 w-48 px-2 py-1"
               placeholder="Masukkan kabupaten/kota"
+              disabled={
+                countdown.days > 0 ||
+                countdown.hours > 0 ||
+                countdown.minutes > 0 ||
+                countdown.seconds > 0
+              }
             />
           </div>
 
@@ -382,6 +428,12 @@ const DetailGiveaway = () => {
               onChange={(e) => setKecamatan(e.target.value)}
               className="border border-gray-400 w-48 px-2 py-1"
               placeholder="Masukkan kecamatan"
+              disabled={
+                countdown.days > 0 ||
+                countdown.hours > 0 ||
+                countdown.minutes > 0 ||
+                countdown.seconds > 0
+              }
             />
           </div>
 
@@ -392,6 +444,12 @@ const DetailGiveaway = () => {
               onChange={(e) => setKelurahan(e.target.value)}
               className="border border-gray-400 w-48 px-2 py-1"
               placeholder="Masukkan desa/kelurahan"
+              disabled={
+                countdown.days > 0 ||
+                countdown.hours > 0 ||
+                countdown.minutes > 0 ||
+                countdown.seconds > 0
+              }
             />
           </div>
 
@@ -402,6 +460,12 @@ const DetailGiveaway = () => {
               onChange={(e) => setKodePos(e.target.value)}
               className="border border-gray-400 w-48 px-2 py-1"
               placeholder="Masukkan kode pos"
+              disabled={
+                countdown.days > 0 ||
+                countdown.hours > 0 ||
+                countdown.minutes > 0 ||
+                countdown.seconds > 0
+              }
             />
           </div>
 
@@ -412,6 +476,12 @@ const DetailGiveaway = () => {
               onChange={(e) => setAlamatLengkap(e.target.value)}
               className="border border-gray-400 w-48 px-2 py-1"
               placeholder="Masukkan alamat lengkap"
+              disabled={
+                countdown.days > 0 ||
+                countdown.hours > 0 ||
+                countdown.minutes > 0 ||
+                countdown.seconds > 0
+              }
             />
           </div>
 
@@ -421,6 +491,12 @@ const DetailGiveaway = () => {
               <Button
                 onClick={() => setShowNoResi(true)}
                 className="bg-green-500 text-white w-full rounded"
+                disabled={
+                  countdown.days > 0 ||
+                  countdown.hours > 0 ||
+                  countdown.minutes > 0 ||
+                  countdown.seconds > 0
+                }
               >
                 Tambah No Resi
               </Button>
@@ -434,6 +510,12 @@ const DetailGiveaway = () => {
                 onChange={(e) => setNoResi(e.target.value)}
                 className="border border-gray-400 w-48 px-2 py-1"
                 placeholder="Masukkan No Resi"
+                disabled={
+                  countdown.days > 0 ||
+                  countdown.hours > 0 ||
+                  countdown.minutes > 0 ||
+                  countdown.seconds > 0
+                }
               />
             </div>
           )}
@@ -444,6 +526,12 @@ const DetailGiveaway = () => {
               <Button
                 onClick={() => setShowKurir(true)}
                 className="bg-green-500 text-white w-full rounded"
+                disabled={
+                  countdown.days > 0 ||
+                  countdown.hours > 0 ||
+                  countdown.minutes > 0 ||
+                  countdown.seconds > 0
+                }
               >
                 Tambah Kurir
               </Button>
@@ -458,6 +546,12 @@ const DetailGiveaway = () => {
                 onChange={(e) => setKurir(e.target.value)}
                 className="border border-gray-400 w-48 px-2 py-1"
                 placeholder="Masukkan Kurir"
+                disabled={
+                  countdown.days > 0 ||
+                  countdown.hours > 0 ||
+                  countdown.minutes > 0 ||
+                  countdown.seconds > 0
+                }
               />
             </div>
           )}
