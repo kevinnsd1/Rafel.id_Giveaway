@@ -93,7 +93,6 @@ export default function FormPayment() {
       fetchOrderDetails(); // Memanggil API untuk mendapatkan detail order
     } else {
       setError("Order ID tidak ditemukan");
-      console.error("Order ID tidak ditemukan");
     }
   }, [order_Id]); // Memicu fetch ketika order_Id telah di-set
 
